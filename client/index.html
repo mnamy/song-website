@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Font Test</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="center-wrapper">
+    <h1>Generate a Song of the Day based on your current mood</h1>
+    <div class="input-box">
+      <input
+        type="text"
+        placeholder="What’s your vibe?"
+        class="mood-input"
+      />
+      <div class="svg-icon">
+    <!-- your SVG here -->
+    <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 50 50" fill="none">
+      <circle cx="25" cy="25" r="25" fill="#6774ED"/>
+      <path d="M26.0607 10.9393C25.4749 10.3536 24.5251 10.3536 23.9393 10.9393L14.3934 20.4853C13.8076 21.0711 13.8076 22.0208 14.3934 22.6066C14.9792 23.1924 15.9289 23.1924 16.5147 22.6066L25 14.1213L33.4853 22.6066C34.0711 23.1924 35.0208 23.1924 35.6066 22.6066C36.1924 22.0208 36.1924 21.0711 35.6066 20.4853L26.0607 10.9393ZM25 37H26.5L26.5 12H25H23.5L23.5 37H25Z" fill="white"/>
+    </svg>
+    </div>
+</div>
+<div id="result"></div>
+</div>
+<script src="config.js"></script>
+<script src="script.js"></script>
+  <script>
+    console.log("✅ JS is running");
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const input = document.querySelector('.mood-input');
+      const svgIcon = document.querySelector('.svg-icon');
+      const result = document.getElementById('result');
+
+      async function getSongFromMood() {
+        const mood = input.value.trim();
+        if (!mood) return;
+
+        result.textContent = "Thinking...";
+
+        try {
+          const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+              model: "gpt-3.5-turbo",
+              messages: [
+                {
+                  role: "system",
+                  content: "You are a helpful music bot. When given a mood, you return 1 song recommendation with artist and title only."
+                },
+                {
+                  role: "user",
+                  content: `Recommend one song for this mood: "${mood}"`
+                }
+              ],
+              max_tokens: 50,
+              temperature: 0.7
+            })
+          });
+
+          const data = await response.json();
+          const song = data.choices[0].message.content;
+          result.innerHTML = `<p>🎵 <strong>${song}</strong></p>`;
+        } catch (error) {
+          console.error(error);
+          result.textContent = "Something went wrong 😢";
+        }
+      }
+
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          getSongFromMood();
+        }
+      });
+
+      svgIcon.addEventListener("click", getSongFromMood);
+    });
+  </script>
+</body>
+</html> 

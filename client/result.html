@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Song of the Day</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Helvetica Neue", sans-serif;
+      background: url("gradient.png") no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    h1 {
+      color: white;
+      text-align: center;
+      font-family: "TAN MERINGUE", serif;
+      font-size: 40px;
+      margin-top: 60px;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 100px;
+      background: white;
+      border-radius: 20px;
+      padding: 100px;
+      width: fit-content;
+      margin: 0 auto;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .album-cover {
+      width: 400px;
+      height: 400px;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .info-box {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 100px;
+      width: 90%;
+
+    }
+
+    .song-title {
+      font-family: "TAN MERINGUE", serif;
+      font-size: 40px;
+      color: black;
+      margin: 0;
+    }
+
+    .artist-name {
+      font-family: "Helvetica Neue", sans-serif;
+      font-size: 30px;
+      color: black;
+      margin: 0;
+      text-align: center;
+    }
+
+    .spotify-button {
+      display: flex;
+      padding: 15px 30px;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      border-radius: 30px;
+      background: linear-gradient(90deg, #a18cd1 0%, #fbc2eb 100%);
+      color: white;
+      font-size: 30px;
+      font-weight: 400;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+
+    .spotify-button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <h1>Your Song-of-the-Day is...</h1>
+  <div class="card">
+    <img id="album-cover" class="album-cover" src="" alt="Album Art">
+    <div class="info-box">
+      <div>
+        <h2 class="song-title" id="song-title">Song Title</h2>
+        <p class="artist-name" id="artist-name">Artist Name</p>
+      </div>
+      <a id="spotify-link" class="spotify-button" href="#" target="_blank">View on Spotify</a>
+    </div>
+  </div>
+
+  <script>
+    // Get song data passed via URL
+    const params = new URLSearchParams(window.location.search);
+    document.getElementById('song-title').textContent = params.get('title') || "N/A";
+    document.getElementById('artist-name').textContent = params.get('artist') || "Unknown Artist";
+    document.getElementById('album-cover').src = params.get('image') || "";
+    document.getElementById('spotify-link').href = params.get('spotifyUrl') || "#";
+  </script>
+</body>
+</html>
