@@ -8,9 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!mood) return;
 
     result.textContent = 'Thinking...';
+    result.style.display = 'block';
 
     try {
-      // 1. Get song suggestion from OpenAI
+      // 🔮 Step 1: Get song from OpenAI
       const openaiRes = await fetch('http://localhost:3000/api/openai-song', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -20,38 +21,52 @@ document.addEventListener("DOMContentLoaded", () => {
       const openaiData = await openaiRes.json();
       if (!openaiData.song) throw new Error('OpenAI did not return a song.');
 
-      const song = openaiData.song;
-      console.log("OpenAI response:", song);
+      const song = openaiData.song.trim();
+      console.log("🎤 OpenAI response:", song);
 
-      // 2. Parse song + artist
+      // 🎼 Step 2: Parse song and artist
       let title = '', artist = '';
-      const match = song.match(/^(.+?)\s+by\s+(.+)$/i);
-      if (match) {
-        title = match[1].trim();
-        artist = match[2].trim();
-      } else {
+
+      if (song.includes(' - ')) {
+        [title, artist] = song.split(' - ').map(str => str.trim());
+      }
+
+      if (!title || !artist) {
+        const match = song.match(/^(.+?)\s+by\s+(.+)$/i);
+        if (match) {
+          title = match[1].trim();
+          artist = match[2].trim();
+        }
+      }
+
+      if (!title || !artist) {
         const lines = song.split('\n');
         const titleLine = lines.find(line => line.toLowerCase().includes('song'));
         const artistLine = lines.find(line => line.toLowerCase().includes('artist'));
         title = titleLine?.split(':')[1]?.trim() || '';
         artist = artistLine?.split(':')[1]?.trim() || '';
-        if (!title || !artist) throw new Error('Could not parse song or artist.');
       }
 
-      // 3. Get track info from Spotify
+      if (!title || !artist) {
+        throw new Error('Could not parse song or artist.');
+      }
+
+      // 🔍 Step 3: Get Spotify info
       const spotifyRes = await fetch(`http://localhost:3000/api/spotify-search?q=${encodeURIComponent(title + ' ' + artist)}`);
       const spotifyData = await spotifyRes.json();
       if (spotifyData.error) throw new Error(spotifyData.error);
 
       const { image, spotifyUrl } = spotifyData;
 
-      // ✅ 4. Redirect — hard stop
+      // ✅ Step 4: Redirect and exit before catch can fire
       const query = new URLSearchParams({ title, artist, image, spotifyUrl }).toString();
+      result.style.display = 'none';
       window.location.replace(`result.html?${query}`);
-      return; // 💯 STOP function — no catch will fire
+      return;
 
     } catch (err) {
-      console.error("⚠️ Error:", err);
+      console.error("⚠️ Error:", err.message);
+      result.style.display = 'block';
       result.innerHTML = `<p style="color: white; font-family: 'Helvetica Neue', sans-serif;">Something went wrong 😢<br>${err.message}</p>`;
     }
   }

@@ -3,13 +3,13 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 
-// ✅ OpenAI v4
+// ✅ OpenAI
 const { OpenAI } = require('openai');
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
 
-// ✅ Fetch for Spotify (works in Node v16+)
+// ✅ Spotify (uses fetch)
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 
 const app = express();
@@ -18,10 +18,10 @@ const PORT = process.env.PORT || 3000;
 app.use(cors());
 app.use(express.json());
 
-// ✅ Serve static frontend files from ../client
+// ✅ Serve static files from /client
 app.use(express.static(path.join(__dirname, '../client')));
 
-// 🔮 OpenAI Route
+// 🔮 Route: Get song from OpenAI
 app.post('/api/openai-song', async (req, res) => {
   const { mood } = req.body;
   if (!mood) return res.status(400).json({ error: 'Mood is required' });
@@ -30,22 +30,29 @@ app.post('/api/openai-song', async (req, res) => {
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [
-        { role: "system", content: "You are a helpful music bot. Switch up the songs too so they are not always similar. Respond with one song title and artist only, formatted exactly like this: Song Title - Artist Name"},
-        { role: "user", content: `Recommend one song for this mood: ${mood}` }
+        {
+          role: "system",
+          content: "You are a music bot. Only reply with one song and artist in this format: Song Title - Artist Name. Do not add anything else."
+        },
+        {
+          role: "user",
+          content: `Recommend a song that fits this mood: ${mood}`
+        }
       ],
       max_tokens: 50,
-      temperature: 0.7
+      temperature: 0.9
     });
 
     const song = completion.choices[0].message.content;
     res.json({ song });
+
   } catch (error) {
     console.error("OpenAI Error:", error);
     res.status(500).json({ error: 'OpenAI request failed' });
   }
 });
 
-// 🎧 Spotify Route
+// 🎧 Route: Search Spotify
 let spotifyToken = null;
 let tokenExpires = 0;
 
@@ -76,13 +83,12 @@ app.get('/api/spotify-search', async (req, res) => {
 
   try {
     const token = await getSpotifyAccessToken();
-    const response = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`, {
+    const spotifyRes = await fetch(`https://api.spotify.com/v1/search?q=${encodeURIComponent(query)}&type=track&limit=1`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 
-    const data = await response.json();
+    const data = await spotifyRes.json();
     const track = data.tracks?.items?.[0];
-
     if (!track) return res.status(404).json({ error: 'No track found' });
 
     res.json({
@@ -99,7 +105,7 @@ app.get('/api/spotify-search', async (req, res) => {
   }
 });
 
-// ✅ Start server
+// ✅ Start the server
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
 });
