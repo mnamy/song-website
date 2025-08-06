@@ -12,7 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       // 🔮 Step 1: Get song from OpenAI
-      const openaiRes = await fetch('http://localhost:3000/api/openai-song', {
+      const openaiRes = await fetch('https://song-website-63ex.onrender.com/api/openai-song', {
+
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mood })
@@ -52,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       // 🔍 Step 3: Get Spotify info
-      const spotifyRes = await fetch(`http://localhost:3000/api/spotify-search?q=${encodeURIComponent(title + ' ' + artist)}`);
+      const spotifyRes = await fetch(`https://song-website-63ex.onrender.com/api/spotify-search?q=${encodeURIComponent(title + ' ' + artist)}`);
       const spotifyData = await spotifyRes.json();
       if (spotifyData.error) throw new Error(spotifyData.error);
 
