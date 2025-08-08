@@ -14,6 +14,22 @@
       background-size: cover;
     }
 
+    .back-arrow {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      font-size: 24px;
+      text-decoration: none;
+      color: white;
+      background: rgba(0,0,0,0.3);
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: background 0.2s ease;
+    }
+    .back-arrow:hover {
+      background: rgba(0,0,0,0.5);
+    }
+
     h1 {
       color: white;
       text-align: center;
@@ -50,7 +66,6 @@
       align-items: flex-start;
       gap: 100px;
       width: 90%;
-
     }
 
     .song-title {
@@ -89,6 +104,8 @@
   </style>
 </head>
 <body>
+  <a href="index.html" class="back-arrow">← Back</a>
+
   <h1>Your Song-of-the-Day is...</h1>
   <div class="card">
     <img id="album-cover" class="album-cover" src="" alt="Album Art">
