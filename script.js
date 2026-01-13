@@ -13,6 +13,102 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       // 🔮 Step 1: Get song from OpenAI
       const openaiRes = await fetch('https://song-website-63ex.onrender.com/api/openai-song', {
+document.addEventListener("DOMContentLoaded", () => {
+  const input = document.querySelector(".mood-input");
+  const svgIcon = document.querySelector(".svg-icon");
+  const result = document.getElementById("result");
+
+  let isLoading = false;
+
+  function setLoading(loading, message = "Finding a song...") {
+    isLoading = loading;
+
+    if (svgIcon) svgIcon.style.pointerEvents = loading ? "none" : "auto";
+    if (input) input.disabled = loading;
+
+    result.style.display = "block";
+    result.textContent = loading ? message : "";
+  }
+
+  async function postJSON(url, body, timeoutMs = 12000) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: controller.signal
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        const msg = data?.error || `Request failed (${res.status})`;
+        throw new Error(msg);
+      }
+
+      return data;
+    } catch (err) {
+      if (err.name === "AbortError") throw new Error("Timed out. Try again.");
+      throw err;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  async function getSongOfTheDay() {
+    if (isLoading) return;
+
+    const mood = input.value.trim();
+    if (!mood) return;
+
+    setLoading(true, "Finding a song...");
+
+    try {
+      const data = await postJSON(
+        "https://song-website-63ex.onrender.com/api/song",
+        { mood },
+        12000
+      );
+
+      const { title, artist, image, spotifyUrl } = data;
+
+      if (!title || !artist || !spotifyUrl) {
+        throw new Error("Missing song data. Try again.");
+      }
+
+      // Redirect
+      const query = new URLSearchParams({
+        title,
+        artist,
+        image: image || "",
+        spotifyUrl
+      }).toString();
+
+      result.style.display = "none";
+      window.location.replace(`result.html?${query}`);
+    } catch (err) {
+      console.error("⚠️ Error:", err);
+      result.style.display = "block";
+      result.innerHTML = `
+        <p style="color:white;font-family:'Helvetica Neue',sans-serif;">
+          Something went wrong 😢<br>${err.message}
+        </p>
+      `;
+    } finally {
+      setLoading(false);
+      input.disabled = false;
+      if (svgIcon) svgIcon.style.pointerEvents = "auto";
+    }
+  }
+
+  svgIcon.addEventListener("click", getSongOfTheDay);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") getSongOfTheDay();
+  });
+});
 
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
