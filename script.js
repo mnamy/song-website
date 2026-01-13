@@ -1,4 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("✅ script.js loaded");
+
+  const input = document.querySelector(".mood-input");
+  const svgIcon = document.querySelector(".svg-icon");
+  const result = document.getElementById("result");
+
+  console.log("input found?", !!input, "svg found?", !!svgIcon, "result found?", !!result);
+
+document.addEventListener("DOMContentLoaded", () => {
   const input = document.querySelector('.mood-input');
   const svgIcon = document.querySelector('.svg-icon');
   const result = document.getElementById('result');
