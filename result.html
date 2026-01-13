@@ -10,12 +10,13 @@
     body {
       margin: 0;
       padding: 0;
+      min-height: 100vh;
       font-family: "Helvetica Neue", sans-serif;
       background: url("gradient.png") no-repeat center center fixed;
       background-size: cover;
-      min-height: 100vh;
     }
 
+    /* back button */
     .back-arrow {
       position: absolute;
       top: 20px;
@@ -27,78 +28,86 @@
       padding: 10px 14px;
       border-radius: 10px;
       transition: background 0.2s ease;
+      z-index: 2;
     }
     .back-arrow:hover {
       background: rgba(0, 0, 0, 0.4);
     }
 
+    /* title */
     h1 {
       color: white;
       text-align: center;
       font-family: "TAN MERINGUE", serif;
-      font-size: clamp(28px, 5vw, 56px);
-      margin: 70px 16px 26px;
+      font-size: clamp(30px, 5vw, 60px);
       font-weight: 500;
+      margin: 84px 16px 46px; /* more breathing room */
     }
 
+    /* page wrapper */
     .page {
       width: 100%;
       display: flex;
       justify-content: center;
-      padding: 0 16px 48px;
+      padding: 0 16px 64px; /* more bottom space */
       box-sizing: border-box;
     }
 
+    /* card */
     .card {
       width: 100%;
-      max-width: 780px;
+      max-width: 860px;
       background: rgba(255, 255, 255, 0.92);
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: 0 14px 45px rgba(0, 0, 0, 0.18);
+      border-radius: 22px;
+      box-shadow: 0 16px 55px rgba(0, 0, 0, 0.18);
+      padding: 44px 40px; /* more vertical spacing */
+      box-sizing: border-box;
+
       display: flex;
       align-items: center;
-      gap: 28px;
-      box-sizing: border-box;
+      gap: 34px;
     }
 
+    /* album */
     .album-cover {
-      width: 220px;
-      height: 220px;
+      width: 240px;
+      height: 240px;
       object-fit: cover;
-      border-radius: 14px;
+      border-radius: 16px;
       flex: 0 0 auto;
     }
 
+    /* info */
     .info-box {
       flex: 1;
       min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 26px; /* more breathing room */
       align-items: flex-start;
     }
 
     .song-title {
       font-family: "TAN MERINGUE", serif;
-      font-size: clamp(28px, 4vw, 54px);
+      font-size: clamp(28px, 4vw, 56px);
       line-height: 1.05;
       color: #111;
       margin: 0;
+      word-break: break-word;
     }
 
     .artist-name {
       font-size: 22px;
       color: #111;
       opacity: 0.85;
-      margin: 0;
+      margin: 10px 0 0;
     }
 
     .spotify-button {
       display: inline-flex;
-      padding: 14px 22px;
       justify-content: center;
       align-items: center;
+      padding: 14px 22px;
       border-radius: 999px;
       background: linear-gradient(90deg, #6e72ff, #ff5bd6, #ffb11a);
       color: white;
@@ -107,43 +116,46 @@
       text-decoration: none;
       transition: opacity 0.2s ease;
       width: fit-content;
+      margin-top: 6px;
     }
 
     .spotify-button:hover {
       opacity: 0.9;
     }
 
-    /* ✅ Mobile: stacked centered card like your mock */
+    /* ✅ mobile: stacked centered, with more vertical air */
     @media (max-width: 720px) {
       h1 {
-        margin-top: 90px;
-        margin-bottom: 18px;
+        margin: 96px 16px 30px;
       }
 
       .card {
+        max-width: 560px;
         flex-direction: column;
         text-align: center;
-        gap: 18px;
-        padding: 22px;
-        max-width: 520px;
+        gap: 20px;
+        padding: 34px 24px;
       }
 
       .album-cover {
-        width: 210px;
-        height: 210px;
+        width: 215px;
+        height: 215px;
       }
 
       .info-box {
         align-items: center;
+        gap: 18px;
       }
 
       .artist-name {
         font-size: 18px;
+        margin-top: 8px;
       }
 
       .spotify-button {
         font-size: 16px;
         padding: 12px 18px;
+        margin-top: 8px;
       }
     }
   </style>
